@@ -24,7 +24,7 @@ namespace ASPDotNetCoreWithVue
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddRazorPages();
+            services.AddRazorPages();
             services.AddSpaStaticFiles(configuration =>
             {
                 configuration.RootPath = "ClientApp";
@@ -52,6 +52,13 @@ namespace ASPDotNetCoreWithVue
 
             //app.UseAuthorization();
 
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
+            });
+
             app.UseSpa(spa =>
             {
                 if (env.IsDevelopment())
@@ -68,6 +75,9 @@ namespace ASPDotNetCoreWithVue
                     spa.UseVueCli(npmScript: "serve");
                 }
             });
+
+
+
         }
     }
 }
