@@ -4,32 +4,34 @@ using System.Linq;
 using System.Threading.Tasks;
 using ASPDotNetCoreWithVue.Models;
 using Data;
+using Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Service;
 
 namespace ASPDotNetCoreWithVue.Controllers
 {
     public class UserController : Controller
     {
         private readonly DefaultDbContext _dbContext;
+        private readonly AuthInfoService _authInfoService;
 
-        public UserController(DefaultDbContext dbContext)
+        public UserController(DefaultDbContext dbContext,AuthInfoService authInfoService)
         {
             _dbContext = dbContext;
+            _authInfoService = authInfoService;
         }
-        public JsonResult Login([FromBody] UserAuthInfo user)
+        public JsonResult Login([FromBody] AuthInfo user)
         {
             JsonResult json = null;
-            var data = _dbContext.AuthInfo.
-                       FirstOrDefault(x=>x.UserName == user.Username && x.Password == user.Password);
-            if (data != null)
+            
+            var token = _authInfoService.LoginAuth(user);
+            if ( !String.IsNullOrEmpty(token))
             {
-                data.Token = Guid.NewGuid().ToString();
-                _dbContext.SaveChanges();
                 json = new JsonResult(new
                 {
                     code = 20000,
-                    data = new { token = data.Token }
+                    data = new { token = token }
                 });
             }
             else
@@ -46,11 +48,10 @@ namespace ASPDotNetCoreWithVue.Controllers
         public JsonResult Info(string token)
         {
             JsonResult result = null;
-            var auth = _dbContext.AuthInfo.Include(x=>x.UserInfo.Roles).FirstOrDefault(x => x.Token == token);
-
+            AuthInfo auth = _authInfoService.GetAuth(token);
             if (auth.UserInfo != null)
             {
-                var user = new UserInfo();
+                var user = new Models.UserInfo();
                 user.Name = auth.UserInfo.Name;
                 user.Avatar = auth.UserInfo.Avatar;
                 user.Introduction = auth.UserInfo.Introduction;
