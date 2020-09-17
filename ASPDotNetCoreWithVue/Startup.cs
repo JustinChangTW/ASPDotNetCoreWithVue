@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json;
 using Service;
 using VueCliMiddleware;
 
@@ -36,7 +37,14 @@ namespace ASPDotNetCoreWithVue
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
             );
 
+            //Microsoft.AspNetCore.Mvc.NewtonsoftJson
+            services.AddControllers().AddNewtonsoftJson(option =>
+                //©ø≤§¥`¿Ù∞—¶“
+                option.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            );
+
             services.AddScoped<AuthInfoService>();
+            services.AddScoped<RoutesService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -15,5 +15,6 @@ namespace Data
         public DbSet<UserInfo> UserInfo { get; set; }
         public DbSet<RoleInfo> RoleInfo { get; set; }
         public DbSet<AuthInfo> AuthInfo { get; set; }
+        public DbSet<RouteInfo> RouteInfo { get; set; }
     }
 }

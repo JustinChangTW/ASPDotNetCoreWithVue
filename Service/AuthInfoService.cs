@@ -33,7 +33,8 @@ namespace Service
         }
         private string GetToke(AuthInfo auth)
         {
-            return Guid.NewGuid().ToString();
+            var token = auth.UserName + "-token";
+            return token;
         }
 
     }
